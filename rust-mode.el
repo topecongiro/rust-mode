@@ -166,6 +166,11 @@ function or trait.  When nil, where will be aligned with fn or trait."
   :type 'boolean
   :group 'rust-mode)
 
+(defcustom rust-incremental nil
+  "Enable incremetal compilation."
+  :type 'boolean
+  :group 'rust-mode)
+
 (defface rust-unsafe-face
   '((t :inherit font-lock-warning-face))
   "Face for the `unsafe' keyword."
@@ -1547,7 +1552,10 @@ This is written mainly to be used as `end-of-defun-function' for Rust."
   (setq-local parse-sexp-lookup-properties t)
   (setq-local electric-pair-inhibit-predicate 'rust-electric-pair-inhibit-predicate-wrap)
 
-  (setq-local compile-command "cargo build")
+  (setq-local compile-command
+              (if rust-incremental
+                  "cargo build"
+                "CARGO_INCREMENTAL=1 cargo build"))
 
   (add-hook 'before-save-hook 'rust--before-save-hook nil t)
 
